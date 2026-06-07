@@ -74,6 +74,8 @@ I really wanted this mod updated for NeoForge 1.21.1 and the original hadn't bee
 
 ---
 
+Also LLM assisted for GitHub actions (I ain't learning that)
+
 ## License
 
 MIT
