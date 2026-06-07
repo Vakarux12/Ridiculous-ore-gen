@@ -3,6 +3,7 @@
 > A NeoForge 1.21.1 port of the [Ridiculous Ore Generation](https://modrinth.com/mod/rediculous-ore-generation) / [BOG](https://www.curseforge.com/minecraft/mc-mods/bog) mod.
 
 Recommended for those who likes to play modded but has no time to do so or wants to progress faster
+
 I'd also recommend adding veinminer lol
 
 ---
