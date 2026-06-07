@@ -68,7 +68,7 @@ The biome modifier runs in `Phase.MODIFY`, after all other mods have finished th
 Honestly, this is a straight up copy of the mods done by the creators of:
 
 - [Ridiculous Ore Generation](https://modrinth.com/mod/rediculous-ore-generation) on Modrinth
-- [BOG (Bucket of Gravel)](https://www.curseforge.com/minecraft/mc-mods/bog) on CurseForge
+- [BOG (Better ore Generation)](https://www.curseforge.com/minecraft/mc-mods/bog) on CurseForge
 
 I really wanted this mod updated for NeoForge 1.21.1 and the original hadn't been, so I remade it. All credit goes to them for the original concept and implementation. Thanks.
 
