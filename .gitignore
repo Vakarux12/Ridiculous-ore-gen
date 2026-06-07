@@ -1,0 +1,43 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Generated resources (datagen output) — keep directory, ignore contents
+src/generated/resources/*
+!src/generated/resources/.gitkeep
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+.run/
+
+# Eclipse
+.apt_generated
+.classpath
+.eclipse/
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+bin/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Mod run directories (created when running from IDE)
+run/
+run-data/
+
+# Local maven repo output
+repo/
+
+# Zip downloads
+*.zip
