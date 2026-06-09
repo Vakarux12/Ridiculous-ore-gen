@@ -13,6 +13,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record OreMultiplierBiomeModifier() implements BiomeModifier {
@@ -25,8 +26,6 @@ public record OreMultiplierBiomeModifier() implements BiomeModifier {
 
     @Override
     public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
-        // Run in MODIFY phase so every other mod's ADD phase has already completed.
-        // Reading from the builder at this point sees vanilla + ALL modded ore features.
         if (phase != Phase.MODIFY) return;
 
         int extra = RidiculousOreGenConfig.ORE_MULTIPLIER.getAsInt() - 1;
@@ -41,17 +40,20 @@ public record OreMultiplierBiomeModifier() implements BiomeModifier {
             GenerationStep.Decoration step,
             int extra) {
 
-        // Snapshot before iterating so we don't see our own additions mid-loop
-        List<Holder<PlacedFeature>> snapshot = List.copyOf(
-                builder.getGenerationSettings().getFeatures(step));
+        List<Holder<PlacedFeature>> features = builder.getGenerationSettings().getFeatures(step);
+        List<Holder<PlacedFeature>> snapshot = List.copyOf(features);
+        features.clear();
 
+        // Insert copies immediately after each original to avoid feature order cycles.
+        // Appending all copies at the end would interleave ores with non-ore features
+        // (e.g. in biomes like alexscaves:candy_cavity), creating ordering contradictions
+        // across biomes that crash the FeatureSorter.
         for (Holder<PlacedFeature> feature : snapshot) {
-            // Only multiply ore/vein/blob features — skip geodes, stalactites, etc.
+            features.add(feature);
             String id = feature.unwrapKey().map(k -> k.location().getPath()).orElse("");
             if (!id.contains("ore") && !id.contains("vein") && !id.contains("blob")) continue;
-
             for (int i = 0; i < extra; i++) {
-                builder.getGenerationSettings().getFeatures(step).add(feature);
+                features.add(feature);
             }
         }
     }
