@@ -15,6 +15,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
+import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,8 +64,15 @@ public record OreMultiplierBiomeModifier() implements BiomeModifier {
             // PlacedFeature values. Each runs the ore with the same effective count as the
             // original.
             PlacedFeature pf = feature.value();
+            // Strip BiomeFilter from copies: these are unregistered Holder.direct() instances,
+            // so BiomeFilter can't look them up in the registry and throws at placement time.
+            // The copies are already scoped to the right biome by the biome modifier, so the
+            // filter is redundant.
+            List<PlacementModifier> basePlacement = pf.placement().stream()
+                    .filter(m -> !(m instanceof BiomeFilter))
+                    .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
             for (int i = 1; i <= extra; i++) {
-                List<PlacementModifier> newPlacement = new ArrayList<>(pf.placement());
+                List<PlacementModifier> newPlacement = new ArrayList<>(basePlacement);
                 for (int j = 0; j < i; j++) {
                     newPlacement.add(CountPlacement.of(1));
                 }

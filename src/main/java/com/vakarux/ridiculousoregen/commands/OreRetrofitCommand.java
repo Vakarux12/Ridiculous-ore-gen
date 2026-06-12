@@ -24,7 +24,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
+import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class OreRetrofitCommand {
 
@@ -218,9 +221,16 @@ public class OreRetrofitCommand {
             String id = feature.unwrapKey().map(k -> k.location().getPath()).orElse("");
             if (!id.contains("ore") && !id.contains("vein") && !id.contains("blob")) continue;
 
+            // Strip BiomeFilter before calling place() directly — outside normal worldgen the
+            // registry lookup inside BiomeFilter fails for any feature (registered or not).
+            PlacedFeature pf = feature.value();
+            List<PlacementModifier> modifiers = pf.placement().stream()
+                    .filter(m -> !(m instanceof BiomeFilter))
+                    .collect(Collectors.toList());
+            PlacedFeature noBiomeFilter = new PlacedFeature(pf.feature(), modifiers);
             for (int i = 0; i < extra; i++) {
                 try {
-                    feature.value().place(level, level.getChunkSource().getGenerator(), rng, origin);
+                    noBiomeFilter.place(level, level.getChunkSource().getGenerator(), rng, origin);
                 } catch (Exception e) {
                     RidiculousOreGen.LOGGER.warn("Failed to place feature {} in chunk: {}", id, e.getMessage());
                 }
